@@ -53,19 +53,17 @@ print("Welcome to OnionPi!")
 conf = input("[?] Do you want to start the setup? (Y/N)\n")
 
 if(conf != "y" and conf != "Y"):
+	
 	sys.exit("[*] Bye!")
 else:
+
 	print("[*] Let's begin!")
 	os.system("apt-get update && apt-get upgrade")
-	
 	print("[+] Installing Tor")
 	os.system("apt-get install tor")
-	
 	print("[+] Creating Tor user")
 	os.system("adduser tor")
-	
 	os.system("echo 'tor ALL=(ALL) ALL' >> /etc/sudoers")
-	
 	os.system("echo -n "" > /etc/tor/torrc")
 	time.sleep(1)
 	os.system("clear")
@@ -74,20 +72,33 @@ else:
 	
 	conf = ""
 	while(conf == ""):
+		
 		conf = input("[?] Do you want to install a tor relay on your Raspberry Pi? (Y/N)\n")
+	
 	if(conf != "y" and conf != "Y"):
+	
 		print("[*] Ok, let's keep going!")
+	
 		conf = ""
 		while(conf == ""):
+	
 			conf = input("[?] Do you want to install a tor bridge on your Raspberry Pi? (Y/N)\n")
+	
 		if(conf != "y" and conf != "Y"):
+	
 			sys.exit("\n\n[!] OnionPi finished it job. Quitting.")
+	
 		else:
+		
 			pub = ""
 			while(pub == ""):
+		
 				pub = input("[?] Do you want torproject.org to know your bridge? Y/N")
+		
 			if(pub == y or pub == Y):
+		
 				os.system("echo 'PublishServerDescriptor 0' >> /etc/tor/torrc")
+		
 			os.system("echo 'SocksPort 0' >> /etc/tor/torrc")
 			os.system("echo 'BridgeRelay 1' >> /etc/tor/torrc")
 			os.system("echo 'Exitpolicy reject *:*' >> /etc/tor/torrc")
@@ -103,26 +114,22 @@ else:
 		band = 0
 		while(band == 0):
 			band = str(input("[?] How much do you want alocate bandwith to your relay? (in Kb/s)\n"))
+		
 		os.system("RelayBandwidthRate " + band + " KB' >> /etc/tor/torrc")
-		
 		os.system("RelayBandwidthBurst " + band + " KB' >> /etc/tor/torrc")
-		
-		
 		os.system("echo 'SocksPort 0' >> /etc/tor/torrc")
-		
 		os.system("echo 'Log notice file /var/log/tor/notices.log' >> /etc/tor/torrc")
-		
 		os.system("echo 'RunAsDaemon 1' >> /etc/tor/torrc")
-		
 		os.system("echo 'ORPort 9001' >> /etc/tor/torrc")
-		
 		os.system("echo 'DirPort 9030' >> /etc/tor/torrc")
-		
-		
+				
 		ex = ""
 		while(ex == ""):
+		
 			ex = input("[?] Do you want to run your relay as an exit relay? (Dangerous for home devices) (Y/N)\n")
+		
 		if(ex == "Y" or ex == "y"):
+		
 			os.system("echo 'ExitPolicy accept *:20-23     # FTP, SSH, telnet' >> /etc/tor/torrc")
 			os.system("echo 'ExitPolicy accept *:43        # WHOIS' >> /etc/tor/torrc")
 			os.system("echo 'ExitPolicy accept *:53        # DNS' >> /etc/tor/torrc")
@@ -259,39 +266,55 @@ else:
 			os.system("echo 'ExitPolicy reject *:*' >> /etc/tor/torrc")
 			
 		else:
+		
 			os.system("ExitPolicy reject *:*' >> /etc/tor/torrc")
 			
 
 		arm = ""
 		while(arm == ""):
+			
 			arm = input("[?] Do you want to install Tor-Arm to monitor you relay? (Y/N)\n")
+		
 		if(arm == "Y" or arm == "y"):
+		
 			os.system("apt-get install tor-arm")
 			
 		else:
+		
 			print("[*] You can check your relay logs in the /var/log/tor/ folder.")
 
 		print("[+] Restarting Tor")
-		os.system("service tor restart")
-		
+		os.system("service tor restart")		
 
 		print("[!] Done! Your Tor Relay is up and running!")
+
 		if(arm == "Y" or arm == "y"):
+
 			print("You can check the status of your Relay by running this command:\nsudo -u debian-tor arm\n")
 
 		verif = ""
 		while(verif == ""):
+
 			verif = input("[?] Do you want to configure a Hidden Service on you Raspberry Pi? (Y/N)")
+
 		if(verif == N or verif == n):
+			
 			sys.exit("[*] Bye !")
+		
 		else:
+			
 			os.system("clear")
 			print("##### HIDDEN SERVICE SETUP #####")
+			
 			if(not os.path.exists("/usr/sbin/nginx")):
+			
 				os.system("apt-get install nginx")
+			
 			nick = ""
 			while(nick == ""):
+			
 				nick = input("[?] What name do you want to give to your Hidden Service? (One word!!!)\n")
+
 			os.system("mkdir /var/lib/tor/" + nick +"/")
 			os.system("mkdir /var/www/" + nick + "/")
 			os.system("echo 'HiddenServiceDir /var/lib/tor/" + nick +"/' >> /etc/tor/torrc")
@@ -301,22 +324,17 @@ else:
 			(out, err) = proc.communicate()
 			os.system("echo 'server {' > /etc/nginx/sites-available/default")
 			os.system("echo '    listen       127.0.0.1:44480;' >> /etc/nginx/sites-available/default")
-			os.system("echo '    server_name  " + str(out) + ".onion;' >> /etc/nginx/sites-available/default")			
-			os.system("echo '    allow 127.0.0.1;' >> /etc/nginx/sites-available/default")			
-			os.system("echo '    deny all;' >> /etc/nginx/sites-available/default")			
+			os.system("echo '    server_name  " + str(out) + ".onion;' >> /etc/nginx/sites-available/default")
+			os/system("echo '	 root /var/www/" + nick + "/;")
+			os.system("echo '    allow 127.0.0.1;' >> /etc/nginx/sites-available/default")
+			os.system("echo '    deny all;' >> /etc/nginx/sites-available/default")
 			os.system("echo '    server_tokens off;' >> /etc/nginx/sites-available/default")			
-			os.system("echo '    rewrite ^/(.*) http://www." + str(out) +".onion/$1 permanent;' >> /etc/nginx/sites-available/default")			
-			os.system("echo '}' >> /etc/nginx/sites-available/default")			
-			os.system("echo 'server {' >> /etc/nginx/sites-available/default")			
-			os.system("echo '    listen       127.0.0.1:44480;' >> /etc/nginx/sites-available/default")			
-			os.system("echo '    server_name  www." + str(out) +";' >> /etc/nginx/sites-available/default")			
-			os.system("echo '    allow 127.0.0.1;' >> /etc/nginx/sites-available/default")			
-			os.system("echo '    deny all;' >> /etc/nginx/sites-available/default")			
-			os.system("echo '    server_tokens off;' >> /etc/nginx/sites-available/default")			
-			os.system("echo '}' >> /etc/nginx/sites-available/default")		
-			os.system("chown debian-tor:debian-tor -R /var/lib/tor/" + nick +"/")		
-			os.system("chown debian-tor:debian-tor -R /var/www/" + nick + "/")			
-
+			os.system("echo '    rewrite ^/(.*) http://www." + str(out) +".onion/$1 permanent;' >> /etc/nginx/sites-available/default")
+			os.system("echo '}' >> /etc/nginx/sites-available/default")
+			os.system("chown debian-tor:debian-tor -R /var/lib/tor/" + nick +"/")
+			os.system("chown debian-tor:debian-tor -R /var/www/" + nick + "/")
+			
 			print("[!] Done! Your Tor Hidden Service is up and running!")
 			print("[!] You can access by this URL: " + str(out))
+			
 			sys.exit("\n\n[!] OnionPi finished it job. Quitting.")
