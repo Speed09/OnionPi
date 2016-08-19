@@ -8,49 +8,49 @@ import subprocess
 if os.geteuid() != 0:
     exit("You need to have root privileges to run this script.\nPlease try again, this time using 'sudo'. Exiting.")
 
-print("                             						 `/-          ")
-print("                                                 .oy-              ")
-print("                                               -sd/  `-+o:         ")
-print("                                          -  -sds../sdh/`          ")
-print("                                         o+`+hh//shhy/`            ")
-print("                                        /y-syyoyyyy/`              ")
-print("                                       -ysyyyyyyy+`                ")
-print("                                      `syyyyyyyo.                  ")
-print("                                      /yyyyyys:                    ")
-print("                                     `syyyyy+`                     ")
-print("                                  .` :yyyys-                       ")
-print("                                 `.dhyysso.                        ")
-print("                                  `+MMmymy. `                      ")
-print("                                   `NMmhNN- `                      ")
-print("                                  ``mMmhhNs `                      ")
-print("                                  `yMMmyhhms.``                    ")
-print("                                `/dMMmmyNyhmdo-``                  ")
-print("                           ` `-smNMMNmmsNNssddhs:.                 ")
-print("                          `-odNMMMMNhNmsdMNo+hhhhys/. `            ")
-print("                       `-odNMMMNNNmsdNdhsNNN+/yyyyyyyo-`           ")
-print("                     `:hNMMNNNNmhsymNNdydoNNN:/yyyyyyyyo-` `       ")
-print("                  ` -hNMNNNNmhsshmNNNNdyNhomNm.osssssssss+. `      ")
-print("                 ` +NNNNNNdsshmNNNNNNhdoNNh+mNs-ooooooooooo- `     ")
-print("                ` sNNNNNdsydNNNNmmmmhhh/hmmh+mm.+ooooooooooo- `    ")
-print("               ` +NNNNNssmNNNmmmmmdhhmhs+dmmssm:-++++++++++++. `   ")
-print("                `NNNNN/yNNNmmmmdyyhmmmhsh+dmm/m/`////////+//// `   ")
-print("              ` /NNNNo+NNmmmmyoydmddddhsdd/dmoy+ /////////////`    ")
-print("                +NNNN.dNmmmd+sdmddddddy+ddy/dyo+ :////////////` `  ")
-print("              ` /NNNN.mmmmh/dmddddddyoy+sdd:yy// :::::::::::::`    ")
-print("                `mNNN/hmmm:hmddddddo+hys-hdoos+: ::::::::::::-     ")
-print("               ` +NNNh:mmd.mmddddds/hhys:sdo++o``------------` `   ")
-print("                ` sNNNo+mm.dmddddd-hhhyo+/hoo:s `-----------.      ")
-print("                 ` omNm+omoodddddd-ddhyso:d/o-/ ...........` `     ")
-print("                  ` -hmmo/d/oddddd.hddys//d./o` ..........` `      ")
-print("                   ```/dmy:y+/hdddo/ddys.so::: `.......`` ``       ")
-print("                      ``:ydo+s:/hddo/hh/.h:.- ````````  ``         ")
-print("                         ``:+/+o///so//`/-`  ``````   `            ")
-print("                            `  ``.-. ``        `                   ")
-print("                                      `  `     				      ")
-print("		OnionPi v0.1\n")
+print("                 						 `/-          ")
+print("                                     .oy-              ")
+print("                                   -sd/  `-+o:         ")
+print("                              -  -sds../sdh/`          ")
+print("                             o+`+hh//shhy/`            ")
+print("                            /y-syyoyyyy/`              ")
+print("                           -ysyyyyyyy+`                ")
+print("                          `syyyyyyyo.                  ")
+print("                          /yyyyyys:                    ")
+print("                         `syyyyy+`                     ")
+print("                      .` :yyyys-                       ")
+print("                     `.dhyysso.                        ")
+print("                      `+MMmymy. `                      ")
+print("                       `NMmhNN- `                      ")
+print("                      ``mMmhhNs `                      ")
+print("                      `yMMmyhhms.``                    ")
+print("                    `/dMMmmyNyhmdo-``                  ")
+print("               ` `-smNMMNmmsNNssddhs:.                 ")
+print("              `-odNMMMMNhNmsdMNo+hhhhys/. `            ")
+print("           `-odNMMMNNNmsdNdhsNNN+/yyyyyyyo-`           ")
+print("         `:hNMMNNNNmhsymNNdydoNNN:/yyyyyyyyo-` `       ")
+print("      ` -hNMNNNNmhsshmNNNNdyNhomNm.osssssssss+. `      ")
+print("     ` +NNNNNNdsshmNNNNNNhdoNNh+mNs-ooooooooooo- `     ")
+print("    ` sNNNNNdsydNNNNmmmmhhh/hmmh+mm.+ooooooooooo- `    ")
+print("   ` +NNNNNssmNNNmmmmmdhhmhs+dmmssm:-++++++++++++. `   ")
+print("    `NNNNN/yNNNmmmmdyyhmmmhsh+dmm/m/`////////+//// `   ")
+print("  ` /NNNNo+NNmmmmyoydmddddhsdd/dmoy+ /////////////`    ")
+print("    +NNNN.dNmmmd+sdmddddddy+ddy/dyo+ :////////////` `  ")
+print("  ` /NNNN.mmmmh/dmddddddyoy+sdd:yy// :::::::::::::`    ")
+print("    `mNNN/hmmm:hmddddddo+hys-hdoos+: ::::::::::::-     ")
+print("   ` +NNNh:mmd.mmddddds/hhys:sdo++o``------------` `   ")
+print("    ` sNNNo+mm.dmddddd-hhhyo+/hoo:s `-----------.      ")
+print("     ` omNm+omoodddddd-ddhyso:d/o-/ ...........` `     ")
+print("      ` -hmmo/d/oddddd.hddys//d./o` ..........` `      ")
+print("       ```/dmy:y+/hdddo/ddys.so::: `.......`` ``       ")
+print("          ``:ydo+s:/hddo/hh/.h:.- ````````  ``         ")
+print("             ``:+/+o///so//`/-`  ``````   `            ")
+print("                `  ``.-. ``        `                   ")
+print("                          `  `     				      ")
+print("		OnionPi v0.1\n 	by Speed09 - www.speed09.com\n")
 
-print("Welcome to OnionPi! This tool will help you configure your Raspberry Pi as a Tor Relay, a Hidden Service, or more!")
-conf = input("[?] Do you want to start the configuration? Y/N\n")
+print("Welcome to OnionPi!")
+conf = input("[?] Do you want to start the setup? (Y/N)\n")
 
 if(conf != "y" and conf != "Y"):
 	sys.exit("[*] Bye!")
@@ -66,7 +66,7 @@ else:
 	
 	conf = ""
 	while(conf == ""):
-		conf = input("[?] Do you want to install a tor relay on your Raspberry Pi? Y/N\n")
+		conf = input("[?] Do you want to install a tor relay on your Raspberry Pi? (Y/N)\n")
 	if(conf != "y" and conf != "Y"):
 		print("[*] Ok, let's keep going!")
 		pass
@@ -107,7 +107,7 @@ else:
 		
 		ex = ""
 		while(ex == ""):
-			ex = input("[?] Do you want to run your relay as an exit relay? (Dangerous for home devices) Y/N\n")
+			ex = input("[?] Do you want to run your relay as an exit relay? (Dangerous for home devices) (Y/N)\n")
 		if(ex == "Y" or ex == "y"):
 			cmd = "echo 'ExitPolicy accept *:20-23     # FTP, SSH, telnet' >> /etc/tor/torrc"
 			os.system(cmd)
@@ -376,17 +376,17 @@ else:
 			cmd = "echo 'ExitPolicy accept *:33033     # Skype ' >> /etc/tor/torrc"
 			os.system(cmd)
 			cmd = "echo 'ExitPolicy reject *:*' >> /etc/tor/torrc"
-	os.system(cmd)
+			os.system(cmd)
 		else:
 			cmd = "ExitPolicy reject *:*' >> /etc/tor/torrc"
 			os.system(cmd)
 
 		arm = ""
 		while(arm == ""):
-			arm = input("[?] Do you want to install a monitoring program to monitor you relay? (Arm) Y/N\n")
+			arm = input("[?] Do you want to install Tor-Arm to monitor you relay? (Y/N)\n")
 		if(arm == "Y" or arm == "y"):
 			cmd = "apt-get install tor-arm"
-	os.system(cmd)
+			os.system(cmd)
 		else:
 			print("[*] You can check your relay logs in the /var/log/tor/ folder.")
 
@@ -400,7 +400,7 @@ else:
 
 		verif = ""
 		while(verif == ""):
-			verif = input("[?] Do you want to configure a Hidden Service on you Raspberry Pi? Y/N")
+			verif = input("[?] Do you want to configure a Hidden Service on you Raspberry Pi? (Y/N)")
 		if(verif == N or verif == n):
 			sys.exit("[*] Bye !")
 		else:
@@ -415,11 +415,11 @@ else:
 				nick = input("[?] What name do you want to give to your Hidden Service? (One word!!!)\n")
 			cmd = "mkdir /var/lib/tor/" + nick +"/"
 			os.system(cmd)
-			cmd = "mkdir /var/www/" + nick "/"
+			cmd = "mkdir /var/www/" + nick + "/"
 			os.system(cmd)
 			cmd = "echo 'HiddenServiceDir /var/lib/tor/" + nick +"/' >> /etc/tor/torrc"
 			os.system(cmd)
-			cmd = "echo 'HiddenServicePort 80 127.0.0.1:80' >> /etc/tor/torrc"
+			cmd = "echo 'HiddenServicePort 80 127.0.0.1:44480' >> /etc/tor/torrc"
 			os.system(cmd)
 			cmd = "cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak"
 			os.system(cmd)
@@ -457,7 +457,7 @@ else:
 			os.system(cmd)
 			cmd = "chown debian-tor:debian-tor -R /var/lib/tor/" + nick +"/"
 			os.system(cmd)
-			cmd = "chown debian-tor:debian-tor -R /var/www/" + nick "/"
+			cmd = "chown debian-tor:debian-tor -R /var/www/" + nick + "/"
 			os.system(cmd)
 
 			print("[!] Done! Your Tor Hidden Service is up and running!")
