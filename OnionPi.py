@@ -423,15 +423,37 @@ else:
 			os.system(cmd)
 			cmd = "cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak"
 			os.system(cmd)
-			cmd = "echo 'server {' > /etc/nginx/sites-available/default"
-			os.system(cmd)
-			cmd = "echo 'listen		127.0.0.1:80;' >> /etc/nginx/sites-available/default"
-			os.system(cmd)
-			cmd = "echo 'root /var/www/" + nick + "/;' >> /etc/nginx/sites-available/default"
-			os.system(cmd)
 			proc = subprocess.Popen(['cat /var/lib/tor/' + nick + "/hostname"], stdout=subprocess.PIPE, shell=True)
 			(out, err) = proc.communicate()
-			cmd = "echo 'server_name " + str(out) + ";}' >> /etc/nginx/sites-available/default"
+			cmd ="echo 'server {' > /etc/nginx/sites-available/default"
+			os.system(cmd)
+			cmd ="echo '    listen       127.0.0.1:44480;' >> /etc/nginx/sites-available/default"
+			os.system(cmd)
+			cmd ="echo '    server_name  " + str(out) + ".onion;' >> /etc/nginx/sites-available/default"
+			os.system(cmd)
+			cmd ="echo '    allow 127.0.0.1;' >> /etc/nginx/sites-available/default"
+			os.system(cmd)
+			cmd ="echo '    deny all;' >> /etc/nginx/sites-available/default"
+			os.system(cmd)
+			cmd ="echo '    server_tokens off;' >> /etc/nginx/sites-available/default"
+			os.system(cmd)
+			cmd ="echo '    rewrite ^/(.*) http://www." + str(out) +".onion/$1 permanent;' >> /etc/nginx/sites-available/default"
+			os.system(cmd)
+			cmd ="echo '}' >> /etc/nginx/sites-available/default"
+			os.system(cmd)
+			cmd ="echo 'server {' >> /etc/nginx/sites-available/default"
+			os.system(cmd)
+			cmd ="echo '    listen       127.0.0.1:44480;' >> /etc/nginx/sites-available/default"
+			os.system(cmd)
+			cmd ="echo '    server_name  www." + str(out) +";' >> /etc/nginx/sites-available/default"
+			os.system(cmd)
+			cmd ="echo '    allow 127.0.0.1;' >> /etc/nginx/sites-available/default"
+			os.system(cmd)
+			cmd ="echo '    deny all;' >> /etc/nginx/sites-available/default"
+			os.system(cmd)
+			cmd ="echo '    server_tokens off;' >> /etc/nginx/sites-available/default"
+			os.system(cmd)
+			cmd ="echo '}' >> /etc/nginx/sites-available/default"
 			os.system(cmd)
 			cmd = "chown debian-tor:debian-tor -R /var/lib/tor/" + nick +"/"
 			os.system(cmd)
