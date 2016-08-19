@@ -1,9 +1,11 @@
 #!/usr/bin/python3
+#encoding : utf8
 
 import os
 import time
 import sys
 import subprocess
+import pwd
 
 if os.geteuid() != 0:
     exit("You need to have root privileges to run this script.\nPlease try again, this time using 'sudo'. Exiting.")
@@ -47,7 +49,7 @@ print("          ``:ydo+s:/hddo/hh/.h:.- ````````  ``         ")
 print("             ``:+/+o///so//`/-`  ``````   `            ")
 print("                `  ``.-. ``        `                   ")
 print("                          `  `     				      ")
-print("		OnionPi v0.1\n 	by Speed09 - www.speed09.com\n")
+print("		OnionPi v0.3\n 	by Speed09 - www.speed09.com\n")
 
 print("Welcome to OnionPi!")
 conf = input("[?] Do you want to start the setup? (Y/N)\n")
@@ -59,13 +61,17 @@ else:
 
 	print("[*] Let's begin!")
 	os.system("apt-get update && apt-get upgrade")
-	print("[+] Installing Tor")
-	os.system("apt-get install tor")
-	print("[+] Creating Tor user")
-	os.system("adduser tor")
-	os.system("echo 'tor ALL=(ALL) ALL' >> /etc/sudoers")
+	if(not os.path.exists("/etc/tor/")):
+		print("[+] Installing Tor")
+		os.system("apt-get install tor")
+	try:
+		pwd.getpwnam('tor')
+	except KeyError:
+		print("[+] Creating Tor user")
+		os.system("adduser tor")
+		os.system("echo 'tor ALL=(ALL) ALL' >> /etc/sudoers")
+	os.system("cp /etc/tor/torrc /etc/tor/torrc.bak")
 	os.system("echo -n "" > /etc/tor/torrc")
-	time.sleep(1)
 	os.system("clear")
 
 	print("##### TOR NODE SETUP #####")
@@ -86,7 +92,7 @@ else:
 	
 		if(conf != "y" and conf != "Y"):
 	
-			sys.exit("\n\n[!] OnionPi finished it job. Quitting.")
+			sys.exit("\n\n[!] OnionPi finished his job. Quitting.")
 	
 		else:
 		
@@ -98,7 +104,8 @@ else:
 			if(pub == y or pub == Y):
 		
 				os.system("echo 'PublishServerDescriptor 0' >> /etc/tor/torrc")
-		
+			
+			os.system("echo 'PublishServerDescriptor 1' >> /etc/tor/torrc")
 			os.system("echo 'SocksPort 0' >> /etc/tor/torrc")
 			os.system("echo 'BridgeRelay 1' >> /etc/tor/torrc")
 			os.system("echo 'Exitpolicy reject *:*' >> /etc/tor/torrc")
@@ -310,31 +317,26 @@ else:
 			
 				os.system("apt-get install nginx")
 			
-			nick = ""
-			while(nick == ""):
-			
-				nick = input("[?] What name do you want to give to your Hidden Service? (One word!!!)\n")
-
-			os.system("mkdir /var/lib/tor/" + nick +"/")
-			os.system("mkdir /var/www/" + nick + "/")
-			os.system("echo 'HiddenServiceDir /var/lib/tor/" + nick +"/' >> /etc/tor/torrc")
+			os.system("mkdir /var/lib/tor/hidden_service/")
+			os.system("mkdir /var/www/hidden_service/")
+			os.system("echo 'HiddenServiceDir /var/lib/tor/hidden_service/' >> /etc/tor/torrc")
 			os.system("echo 'HiddenServicePort 80 127.0.0.1:44480' >> /etc/tor/torrc")
 			os.system("cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak")
-			proc = subprocess.Popen(['cat /var/lib/tor/' + nick + "/hostname"], stdout=subprocess.PIPE, shell=True)
-			(out, err) = proc.communicate()
+			proc = subprocess.Popen(['cat /var/lib/tor/hidden_service/hostname'], stdout=subprocess.PIPE, shell=True)
+			(addr, err) = proc.communicate()
 			os.system("echo 'server {' > /etc/nginx/sites-available/default")
 			os.system("echo '    listen       127.0.0.1:44480;' >> /etc/nginx/sites-available/default")
-			os.system("echo '    server_name  " + str(out) + ".onion;' >> /etc/nginx/sites-available/default")
-			os/system("echo '	 root /var/www/" + nick + "/;")
+			os.system("echo '    server_name  " + str(addr) + ".onion;' >> /etc/nginx/sites-available/default")
+			os/system("echo '	 root /var/www/hidden_service/;")
 			os.system("echo '    allow 127.0.0.1;' >> /etc/nginx/sites-available/default")
 			os.system("echo '    deny all;' >> /etc/nginx/sites-available/default")
 			os.system("echo '    server_tokens off;' >> /etc/nginx/sites-available/default")			
-			os.system("echo '    rewrite ^/(.*) http://www." + str(out) +".onion/$1 permanent;' >> /etc/nginx/sites-available/default")
+			os.system("echo '    rewrite ^/(.*) http://www." + str(addr) +".onion/$1 permanent;' >> /etc/nginx/sites-available/default")
 			os.system("echo '}' >> /etc/nginx/sites-available/default")
-			os.system("chown debian-tor:debian-tor -R /var/lib/tor/" + nick +"/")
-			os.system("chown debian-tor:debian-tor -R /var/www/" + nick + "/")
+			os.system("chown debian-tor:debian-tor -R /var/lib/tor/hidden_service/")
+			os.system("chown debian-tor:debian-tor -R /var/www/hidden_service/")
 			
 			print("[!] Done! Your Tor Hidden Service is up and running!")
-			print("[!] You can access by this URL: " + str(out))
+			print("[!] You can access by this URL: " + str(addr))
 			
 			sys.exit("\n\n[!] OnionPi finished it job. Quitting.")
