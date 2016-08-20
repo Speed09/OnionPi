@@ -60,7 +60,7 @@ if(conf != "y" and conf != "Y"):
 else:
 
 	print("[*] Let's begin!")
-	os.system("apt-get update && apt-get upgrade")
+	#os.system("apt-get update && apt-get upgrade")
 	if(not os.path.exists("/etc/tor/")):
 		print("[+] Installing Tor")
 		os.system("apt-get install tor")
@@ -70,6 +70,8 @@ else:
 		print("[+] Creating Tor user")
 		os.system("adduser tor")
 		os.system("echo 'tor ALL=(ALL) ALL' >> /etc/sudoers")
+	print("[*] Stopping Tor")
+	os.system("service tor stop")
 	os.system("cp /etc/tor/torrc /etc/tor/torrc.bak")
 	os.system("echo -n "" > /etc/tor/torrc")
 	os.system("clear")
@@ -92,7 +94,7 @@ else:
 	
 		if(conf != "y" and conf != "Y"):
 	
-			sys.exit("\n\n[!] OnionPi finished his job. Quitting.")
+			print("[*] Ok, let's keep going!")
 	
 		else:
 		
@@ -299,44 +301,54 @@ else:
 
 			print("You can check the status of your Relay by running this command:\nsudo -u debian-tor arm\n")
 
-		verif = ""
-		while(verif == ""):
+	verif = ""
+	while(verif == ""):
 
-			verif = input("[?] Do you want to configure a Hidden Service on you Raspberry Pi? (Y/N)")
+		verif = input("[?] Do you want to configure a Hidden Service on you Raspberry Pi? (Y/N)\n")
 
-		if(verif == N or verif == n):
+	if(verif == "N" or verif == "n"):
 			
-			sys.exit("[*] Bye !")
+		sys.exit("[*] Bye !")
 		
-		else:
+	else:
 			
-			os.system("clear")
-			print("##### HIDDEN SERVICE SETUP #####")
-			
-			if(not os.path.exists("/usr/sbin/nginx")):
-			
-				os.system("apt-get install nginx")
-			
-			os.system("mkdir /var/lib/tor/hidden_service/")
-			os.system("mkdir /var/www/hidden_service/")
-			os.system("echo 'HiddenServiceDir /var/lib/tor/hidden_service/' >> /etc/tor/torrc")
-			os.system("echo 'HiddenServicePort 80 127.0.0.1:44480' >> /etc/tor/torrc")
+		os.system("clear")
+		print("##### HIDDEN SERVICE SETUP #####")
+		
+		if(not os.path.exists("/usr/sbin/nginx")):
+		
+			os.system("apt-get install nginx")
+		
+		print("[*] Stopping Nginx")
+		os.system("service nginx stop")
+		os.system("mkdir /var/lib/tor/hidden_service/")
+		os.system("mkdir /var/www/hidden_service/")
+		os.system("chown debian-tor:debian-tor -R /var/lib/tor/hidden_service/")
+		os.system("chown debian-tor:debian-tor -R /var/www/hidden_service/")
+		os.system("echo 'HiddenServiceDir /var/lib/tor/hidden_service/' >> /etc/tor/torrc")
+		os.system("echo 'HiddenServicePort 80 127.0.0.1:44480' >> /etc/tor/torrc")
+		print("[*] Starting Tor")
+		os.system("service tor start")
+		print("[*] Generating Hostname and Keys")
+		time.sleep(4)
+		os.system("echo '<h1>Your Hidden Service is working!</h1><p>- OnionPi</p>' > /var/www/hidden_service/index.html")
+		if(os.path.exists("/etc/nginx/sites-available/default")):
 			os.system("cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak")
-			proc = subprocess.Popen(['cat /var/lib/tor/hidden_service/hostname'], stdout=subprocess.PIPE, shell=True)
-			(addr, err) = proc.communicate()
-			os.system("echo 'server {' > /etc/nginx/sites-available/default")
-			os.system("echo '    listen       127.0.0.1:44480;' >> /etc/nginx/sites-available/default")
-			os.system("echo '    server_name  " + str(addr) + ".onion;' >> /etc/nginx/sites-available/default")
-			os/system("echo '	 root /var/www/hidden_service/;")
-			os.system("echo '    allow 127.0.0.1;' >> /etc/nginx/sites-available/default")
-			os.system("echo '    deny all;' >> /etc/nginx/sites-available/default")
-			os.system("echo '    server_tokens off;' >> /etc/nginx/sites-available/default")			
-			os.system("echo '    rewrite ^/(.*) http://www." + str(addr) +".onion/$1 permanent;' >> /etc/nginx/sites-available/default")
-			os.system("echo '}' >> /etc/nginx/sites-available/default")
-			os.system("chown debian-tor:debian-tor -R /var/lib/tor/hidden_service/")
-			os.system("chown debian-tor:debian-tor -R /var/www/hidden_service/")
-			
-			print("[!] Done! Your Tor Hidden Service is up and running!")
-			print("[!] You can access by this URL: " + str(addr))
-			
-			sys.exit("\n\n[!] OnionPi finished it job. Quitting.")
+		addr = str(os.popen('cat /var/lib/tor/hidden_service/hostname').read()).rstrip()
+		os.system("echo 'server {' > /etc/nginx/sites-available/default")
+		os.system("echo '	listen	127.0.0.1:44480;' >> /etc/nginx/sites-available/default")
+		os.system("echo '	server_name	" + addr + ";' >> /etc/nginx/sites-available/default")
+		os.system("echo '	root	/var/www/hidden_service/;' >> /etc/nginx/sites-available/default ")
+		os.system("echo '	allow	127.0.0.1;' >> /etc/nginx/sites-available/default")
+		os.system("echo '	deny	all;' >> /etc/nginx/sites-available/default")
+		os.system("echo '	server_tokens	off;' >> /etc/nginx/sites-available/default")			
+		os.system("echo '}' >> /etc/nginx/sites-available/default")
+		print("[*] Starting Nginx")
+		os.system("service nginx start")
+		
+		
+		print("[!] Done! Your Tor Hidden Service is up and running!")
+		print("[!] You Hidden Service is located in : /var/www/hidden_service/")
+		print("[!] You can access it by this URL: " + addr)
+		
+		sys.exit("\n[!] OnionPi finished it job. Quitting.")
