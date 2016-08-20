@@ -7,9 +7,6 @@ import sys
 import subprocess
 import pwd
 
-if os.geteuid() != 0:
-    exit("You need to have root privileges to run this script.\nPlease try again, this time using 'sudo'. Exiting.")
-
 print("                 						 `/-          ")
 print("                                     .oy-              ")
 print("                                   -sd/  `-+o:         ")
@@ -49,10 +46,13 @@ print("          ``:ydo+s:/hddo/hh/.h:.- ````````  ``         ")
 print("             ``:+/+o///so//`/-`  ``````   `            ")
 print("                `  ``.-. ``        `                   ")
 print("                          `  `     				      ")
-print("		OnionPi v0.4\n 	by Speed09 - www.speed09.com\n")
+print("		OnionPi v0.5\n 	by Speed09 - www.speed09.com\n")
 
-print("Welcome to OnionPi!")
-conf = input("[?] Do you want to start the setup? (Y/N)\n")
+if os.geteuid() != 0:
+    sys.exit("You need to have root privileges to run this script.\nPlease try again, this time using 'sudo'. Exiting.")
+
+print("-----| Welcome to OnionPi! |-----")
+conf = input("[?] Do you want to start the setup? (Y/N): ")
 
 if(conf != "y" and conf != "Y"):
 	
@@ -61,47 +61,60 @@ else:
 
 	print("[*] Let's begin!")
 	os.system("apt-get update && apt-get upgrade")
+	
 	if(not os.path.exists("/etc/tor/")):
-		print("[+] Installing Tor")
+	
+		print("[*] Installing Tor")
+	
 		os.system("apt-get install tor")
+	
 	try:
+	
 		pwd.getpwnam('tor')
+	
 	except KeyError:
-		print("[+] Creating Tor user")
+	
+		print("[*] Creating Tor user")
 		os.system("adduser tor")
 		os.system("echo 'tor ALL=(ALL) ALL' >> /etc/sudoers")
+	
 	print("[*] Stopping Tor")
 	os.system("service tor stop")
 	os.system("cp /etc/tor/torrc /etc/tor/torrc.bak")
 	os.system("echo -n "" > /etc/tor/torrc")
 	os.system("clear")
 
-	print("##### TOR NODE SETUP #####")
+	print("-----| TOR RELAY SETUP |-----")
 	
 	conf = ""
 	while(conf == ""):
 		
-		conf = input("[?] Do you want to install a tor relay on your Raspberry Pi? (Y/N)\n")
+		conf = input("[?] Do you want to install a tor relay on your Raspberry Pi? (Y/N): ")
 	
 	if(conf != "y" and conf != "Y"):
 	
 		print("[*] Ok, let's keep going!")
-	
+		time.sleep(2)
+		os.system("clear")
 		conf = ""
+
+		print("-----| TOR BRIDGE SETUP |-----")
 		while(conf == ""):
 	
-			conf = input("[?] Do you want to install a tor bridge on your Raspberry Pi? (Y/N)\n")
+			conf = input("[?] Do you want to install a tor bridge on your Raspberry Pi? (Y/N): ")
 	
 		if(conf != "y" and conf != "Y"):
 	
 			print("[*] Ok, let's keep going!")
+			time.sleep(2)
+			os.system("clear")
 	
 		else:
-		
+
 			pub = ""
 			while(pub == ""):
 		
-				pub = input("[?] Do you want torproject.org to know your bridge? Y/N")
+				pub = input("[?] Do you want torproject.org to know your bridge? (Y/N): ")
 		
 			if(pub == y or pub == Y):
 		
@@ -116,14 +129,15 @@ else:
 		
 		name = ""
 		while(name == ""):
-			name = input("[?] What name do you want to give to your relay?\n")
+			name = input("[?] What name do you want to give to your relay?: ")
 		os.system("echo 'Nickname " + name + "' >> /etc/tor/torrc")
 		
 
 		band = 0
-		while(band == 0):
-			band = str(input("[?] How much do you want alocate bandwith to your relay? (in Kb/s)\n"))
+		while(band =< 0 or band > 5000 or type(band) != int):
+			band = int(input("[?] How much do you want alocate bandwith to your relay? (in Kb/s): "))
 		
+		band = int(band)
 		os.system("RelayBandwidthRate " + band + " KB' >> /etc/tor/torrc")
 		os.system("RelayBandwidthBurst " + band + " KB' >> /etc/tor/torrc")
 		os.system("echo 'SocksPort 0' >> /etc/tor/torrc")
@@ -135,10 +149,11 @@ else:
 		ex = ""
 		while(ex == ""):
 		
-			ex = input("[?] Do you want to run your relay as an exit relay? (Dangerous for home devices) (Y/N)\n")
+			ex = input("[?] Do you want to run your relay as an exit relay? (Dangerous for home devices) (Y/N): ")
 		
 		if(ex == "Y" or ex == "y"):
 		
+			print("[*] Setting up as an exit relay (may take some time)")
 			os.system("echo 'ExitPolicy accept *:20-23     # FTP, SSH, telnet' >> /etc/tor/torrc")
 			os.system("echo 'ExitPolicy accept *:43        # WHOIS' >> /etc/tor/torrc")
 			os.system("echo 'ExitPolicy accept *:53        # DNS' >> /etc/tor/torrc")
@@ -278,7 +293,6 @@ else:
 		
 			os.system("ExitPolicy reject *:*' >> /etc/tor/torrc")
 			
-
 		arm = ""
 		while(arm == ""):
 			
@@ -290,17 +304,21 @@ else:
 			
 		else:
 		
-			print("[*] You can check your relay logs in the /var/log/tor/ folder.")
+			print("[!] You can check your relay logs in the /var/log/tor/ folder")
 
-		print("[+] Restarting Tor")
+		print("[*] Restarting Tor")
 		os.system("service tor restart")		
 
 		print("[!] Done! Your Tor Relay is up and running!")
 
 		if(arm == "Y" or arm == "y"):
 
-			print("You can check the status of your Relay by running this command:\nsudo -u debian-tor arm\n")
+			print("[!] You can check the status of your Relay by running this command:\nsudo -u debian-tor arm\n")
+	
+		time.sleep(10)
 
+	os.system("clear")
+	print("-----| TOR HIDDEN SERVICE SETUP |-----")
 	verif = ""
 	while(verif == ""):
 
@@ -311,13 +329,13 @@ else:
 		sys.exit("[*] Bye !")
 		
 	else:
-			
-		os.system("clear")
-		print("##### HIDDEN SERVICE SETUP #####")
 		
 		if(not os.path.exists("/usr/sbin/nginx")):
 		
 			os.system("apt-get install nginx")
+			if(os.path.exists("/etc/nginx/sites-available/default"):
+				os.system("cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak")
+				print("[*] Nginx default config file saved under '/etc/nginx/sites-available/default.bak'")
 		
 		print("[*] Stopping Nginx")
 		os.system("service nginx stop")
@@ -332,8 +350,6 @@ else:
 		print("[*] Generating Hostname and Keys")
 		time.sleep(4)
 		os.system("echo '<h1>Your Hidden Service is working!</h1><p>- OnionPi</p>' > /var/www/hidden_service/index.html")
-		if(os.path.exists("/etc/nginx/sites-available/default")):
-			os.system("cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak")
 		addr = str(os.popen('cat /var/lib/tor/hidden_service/hostname').read()).rstrip()
 		os.system("echo 'server {' > /etc/nginx/sites-available/default")
 		os.system("echo '	listen	127.0.0.1:44480;' >> /etc/nginx/sites-available/default")
@@ -351,4 +367,4 @@ else:
 		print("[!] You Hidden Service is located in : /var/www/hidden_service/")
 		print("[!] You can access it by this URL: " + addr)
 		
-		sys.exit("\n[!] OnionPi finished it job. Quitting.")
+		sys.exit("\n[!] OnionPi finished his job. Bye!")
