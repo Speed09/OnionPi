@@ -49,7 +49,7 @@ print("          ``:ydo+s:/hddo/hh/.h:.- ````````  ``         ")
 print("             ``:+/+o///so//`/-`  ``````   `            ")
 print("                `  ``.-. ``        `                   ")
 print("                          `  `     				      ")
-print("		OnionPi v0.3\n 	by Speed09 - www.speed09.com\n")
+print("		OnionPi v0.4\n 	by Speed09 - www.speed09.com\n")
 
 print("Welcome to OnionPi!")
 conf = input("[?] Do you want to start the setup? (Y/N)\n")
@@ -60,7 +60,7 @@ if(conf != "y" and conf != "Y"):
 else:
 
 	print("[*] Let's begin!")
-	#os.system("apt-get update && apt-get upgrade")
+	os.system("apt-get update && apt-get upgrade")
 	if(not os.path.exists("/etc/tor/")):
 		print("[+] Installing Tor")
 		os.system("apt-get install tor")
