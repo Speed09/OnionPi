@@ -134,7 +134,7 @@ else:
 		
 
 		band = 0
-		while(band =< 0 or band > 5000 or type(band) != int):
+		while(band <= 0 or band > 5000 or type(band) != int):
 			band = int(input("[?] How much do you want alocate bandwith to your relay? (in Kb/s): "))
 		
 		band = int(band)
@@ -333,7 +333,7 @@ else:
 		if(not os.path.exists("/usr/sbin/nginx")):
 		
 			os.system("apt-get install nginx")
-			if(os.path.exists("/etc/nginx/sites-available/default"):
+			if(os.path.exists("/etc/nginx/sites-available/default")):
 				os.system("cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak")
 				print("[*] Nginx default config file saved under '/etc/nginx/sites-available/default.bak'")
 		
