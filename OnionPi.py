@@ -110,7 +110,7 @@ def start():
 
 def relay():
 	print("-----| TOR RELAY SETUP |-----")
-	if(str(os.system("cat /etc/tor/torrc | grep 'ORPort 9001'" != "" and "cat /etc/tor/torrc | grep 'DirPort 9030'") != "")):
+	if(str(os.system("cat /etc/tor/torrc | grep 'ORPort 9001'") != "" and os.system("cat /etc/tor/torrc | grep 'DirPort 9030'") != "")):
 
 		sys.exit("[!] OnionPi detected that you already run a Tor Relay on your computer. Quitting.")
 	
