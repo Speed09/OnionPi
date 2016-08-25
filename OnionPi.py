@@ -46,7 +46,7 @@ print("          ``:ydo+s:/hddo/hh/.h:.- ````````  ``         ")
 print("             ``:+/+o///so//`/-`  ``````   `            ")
 print("                `  ``.-. ``        `                   ")
 print("                          `  `     				      ")
-print("		OnionPi v0.6\n 	by Tom Escolano - www.speed09.com\n")
+print("		OnionPi v0.7\n 	by Tom Escolano - www.speed09.com/me/\n")
 
 if(os.geteuid() != 0):
     sys.exit("You need to have root privileges to run this script.\nPlease try again, this time using 'sudo'. Exiting.")
@@ -337,6 +337,42 @@ def hidden():
 	os.system("clear")
 	print("-----| TOR HIDDEN SERVICE SETUP |-----")
 	
+	while(custom == ""):
+		custom = str(input("[?] Do you want to generate a custom .onion address? (Can take some hours) (Y/N):\n"))
+	if(custom == "Y" or custom == "y"):
+		
+		try:
+		
+			if(not os.path.exists("/usr/bin/git")):
+		
+				print("[*] Installing Git")
+				os.system("apt-get install git -y")
+		
+			os.system("apt-get install build-essential -y")
+			os.system("git clone https://github.com/katmagic/Shallot.git")
+			os.system("rm Shallot/CHANGELOG")
+			os.system("rm Shallot/LICENSE")
+			os.system("rm Shallot/README.asciidoc")
+			os.system("cd Shallot && ./configure && make")
+		
+			domain = ""
+			while(domain == "" or len(domain) > 5):
+		
+				domain = str(input("[*] Please enter your desired domain (5 caracter max.):\n"))
+		
+			print("[*] Beggining generation. It can take several hours.")
+			os.system('./Shallot ^' + domain + ' > key')
+			os.system("cat key | grep -v 'Found' | grep -v '\----------------------------------------------------------------' > ~/private_key")
+			os.system("cat key | grep .onion  | awk -vn=22 '{print substr($0,length($0)-n+1)}' > ~/hostname")
+			print("[*] Generation finished!")
+
+		except:
+		
+			print("[*] OnionPi encountered an error during the name generation. Please check the logs and retry.")
+
+	else:
+		print("[*] Ok. You saved some time.")
+
 	if(os.path.exists("/var/lib/tor/hidden_service/")):
 		sys.exit("[!] OnionPi detected that you already installed a Hidden Service on your machine.\nIf you want to reinstall a Hidden Service, simply delete those folders:\n/var/lib/tor/hidden_service/\n/var/www/hidden_service/\nQuitting.")
 
@@ -359,14 +395,19 @@ def hidden():
 	os.system("service nginx stop")
 	os.system("mkdir /var/lib/tor/hidden_service/")
 	os.system("mkdir /var/www/hidden_service/")
+	if(custom == "y" or custom == "Y"):
+		os.system("mv ~/hostname /var/lib/tor/hidden_service/")
+		os.system("mv ~/private_key /var/lib/tor/hidden_service/")
 	os.system("chown debian-tor:debian-tor -R /var/lib/tor/hidden_service/")
 	os.system("chown debian-tor:debian-tor -R /var/www/hidden_service/")
 	os.system("echo 'HiddenServiceDir /var/lib/tor/hidden_service/' >> /etc/tor/torrc")
 	os.system("echo 'HiddenServicePort 80 127.0.0.1:44480' >> /etc/tor/torrc")
 	print("[*] Starting Tor")
 	os.system("service tor start")
-	print("[*] Generating Hostname and Keys")
-	time.sleep(4)
+	if(custom != "y" or custom != "Y"):
+		print("[*] Generating Hostname and Keys")
+		time.sleep(4)
+	time.sleep(2)
 	os.system("echo '<h1>Your Hidden Service is working!</h1><p>- OnionPi</p>' > /var/www/hidden_service/index.html")
 	addr = str(os.popen('cat /var/lib/tor/hidden_service/hostname').read()).rstrip()
 	os.system("echo 'server {' > /etc/nginx/sites-available/default")
