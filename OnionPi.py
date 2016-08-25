@@ -46,7 +46,7 @@ print("          ``:ydo+s:/hddo/hh/.h:.- ````````  ``         ")
 print("             ``:+/+o///so//`/-`  ``````   `            ")
 print("                `  ``.-. ``        `                   ")
 print("                          `  `     				      ")
-print("		OnionPi v0.6\n 	by Speed09 - www.speed09.com\n")
+print("		OnionPi v0.6\n 	by Tom Escolano - www.speed09.com\n")
 
 if(os.geteuid() != 0):
     sys.exit("You need to have root privileges to run this script.\nPlease try again, this time using 'sudo'. Exiting.")

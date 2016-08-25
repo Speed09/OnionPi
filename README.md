@@ -1,5 +1,8 @@
 #OnionPi
 OnionPi is a simple Tor installation utility for the Raspberry Pi.</br>
+Setting up Tor's features can be hard and dangerous if you don't really know how to do it properly.</br>
+But OnionPi is here for you!</br>
+
 
 #Features
 - Tor Relay installation and configuration</br>
