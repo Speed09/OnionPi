@@ -100,6 +100,7 @@ def start():
 
 	print("[*] Stopping Tor")
 	os.system("service tor stop")
+	print("[*] Creating a backup of the torrc file")
 	os.system("cp /etc/tor/torrc /etc/tor/torrc.bak")
 	os.system("echo -n "" > /etc/tor/torrc")
 	os.system("clear")
@@ -120,10 +121,10 @@ def relay():
 	os.system("echo 'Nickname " + name + "' >> /etc/tor/torrc")
 	
 	band = 0
-	while(band <= 0 or band > 5000 or type(band) != int):
+	while(band <= 0 or band > 10000):
 		band = int(input("[?] How much do you want alocate bandwith to your relay? (in Kb/s): "))
 	
-	band = int(band)
+	print("[*] Setting up default values for the relay")
 	os.system("RelayBandwidthRate " + band + " KB' >> /etc/tor/torrc")
 	os.system("RelayBandwidthBurst " + band + " KB' >> /etc/tor/torrc")
 	os.system("echo 'SocksPort 0' >> /etc/tor/torrc")
@@ -139,7 +140,7 @@ def relay():
 	
 	if(ex == "Y" or ex == "y"):
 	
-		print("[*] Setting up as an exit relay (may take some time)")
+		print("[*] Setting up as an exit relay")
 		os.system("echo 'ExitPolicy accept *:20-23     # FTP, SSH, telnet' >> /etc/tor/torrc")
 		os.system("echo 'ExitPolicy accept *:43        # WHOIS' >> /etc/tor/torrc")
 		os.system("echo 'ExitPolicy accept *:53        # DNS' >> /etc/tor/torrc")
@@ -285,7 +286,7 @@ def relay():
 		arm = input("[?] Do you want to install Tor-Arm to monitor you relay? (Y/N)\n")
 	
 	if(arm == "Y" or arm == "y"):
-	
+		print("[*] Installing Tor-arm")
 		os.system("apt-get install tor-arm")
 		
 	
@@ -310,23 +311,24 @@ def bridge():
 	if(str(os.system("cat /etc/tor/torrc | grep 'BridgeRelay 1' ")) != ""):
 
 		sys.exit("[!] OnionPi detected that your Tor service is already running as a Bridge. Quitting.")
-	
-	pub = ""
-	while(pub == ""):
-
-		pub = input("[?] Do you want torproject.org to know your bridge? (Y/N): ")
-
-	if(pub == "y" or pub == "Y"):
-
-		os.system("echo 'PublishServerDescriptor 1' >> /etc/tor/torrc")
 	else:
-		os.system("echo 'PublishServerDescriptor 0' >> /etc/tor/torrc")
-	
-	os.system("echo 'SocksPort 0' >> /etc/tor/torrc")
-	os.system("echo 'BridgeRelay 1' >> /etc/tor/torrc")
-	os.system("echo 'Exitpolicy reject *:*' >> /etc/tor/torrc")
+		pub = ""
+		while(pub == ""):
 
-	sys.exit("[!] OnionPi finished his job. Quitting.")
+			pub = input("[?] Do you want torproject.org to know your bridge? (Y/N): ")
+
+		if(pub == "y" or pub == "Y"):
+
+			os.system("echo 'PublishServerDescriptor 1' >> /etc/tor/torrc")
+		else:
+			os.system("echo 'PublishServerDescriptor 0' >> /etc/tor/torrc")
+		
+		print("[*] Setting up Tor as a Bridge")
+		os.system("echo 'SocksPort 0' >> /etc/tor/torrc")
+		os.system("echo 'BridgeRelay 1' >> /etc/tor/torrc")
+		os.system("echo 'Exitpolicy reject *:*' >> /etc/tor/torrc")
+
+		sys.exit("[!] OnionPi finished his job. Quitting.")
 
 
 
@@ -336,94 +338,102 @@ def bridge():
 def hidden():
 	os.system("clear")
 	print("-----| TOR HIDDEN SERVICE SETUP |-----")
-	
-	while(custom == ""):
-		custom = str(input("[?] Do you want to generate a custom .onion address? (Can take some hours) (Y/N):\n"))
-	if(custom == "Y" or custom == "y"):
-		
-		try:
-		
-			if(not os.path.exists("/usr/bin/git")):
-		
-				print("[*] Installing Git")
-				os.system("apt-get install git -y")
-		
-			os.system("apt-get install build-essential -y")
-			os.system("git clone https://github.com/katmagic/Shallot.git")
-			os.system("rm Shallot/CHANGELOG")
-			os.system("rm Shallot/LICENSE")
-			os.system("rm Shallot/README.asciidoc")
-			os.system("cd Shallot && ./configure && make")
-		
-			domain = ""
-			while(domain == "" or len(domain) > 5):
-		
-				domain = str(input("[*] Please enter your desired domain (5 caracter max.):\n"))
-		
-			print("[*] Beggining generation. It can take several hours.")
-			os.system('./Shallot ^' + domain + ' > key')
-			os.system("cat key | grep -v 'Found' | grep -v '\----------------------------------------------------------------' > ~/private_key")
-			os.system("cat key | grep .onion  | awk -vn=22 '{print substr($0,length($0)-n+1)}' > ~/hostname")
-			print("[*] Generation finished!")
-
-		except:
-		
-			print("[*] OnionPi encountered an error during the name generation. Please check the logs and retry.")
-
-	else:
-		print("[*] Ok. You saved some time.")
-
 	if(os.path.exists("/var/lib/tor/hidden_service/")):
+	
 		sys.exit("[!] OnionPi detected that you already installed a Hidden Service on your machine.\nIf you want to reinstall a Hidden Service, simply delete those folders:\n/var/lib/tor/hidden_service/\n/var/www/hidden_service/\nQuitting.")
 
-	if(os.path.exists("/usr/sbin/apache2")):
-		print("[!] OnionPi need to stop Apache2 to let nginx work properly")
-		print("[!] Stopping Apache2")
-		os.system("service apache2 stop")
+	else:
+	
+		while(custom == ""):
+			custom = str(input("[?] Do you want to generate a custom .onion address? (Can take some hours) (Y/N):\n"))
+		if(custom == "Y" or custom == "y"):
+			
+			try:
+			
+				if(not os.path.exists("/usr/bin/git")):
+			
+					print("[*] Installing Git")
+					os.system("apt-get install git -y")
+				print("[*] Installing Build-essential to compile Shallot")
+				os.system("apt-get install build-essential -y")
+				print("[*] Installing Shallot")
+				os.system("git clone https://github.com/katmagic/Shallot.git")
+				os.system("rm Shallot/CHANGELOG")
+				os.system("rm Shallot/LICENSE")
+				os.system("rm Shallot/README.asciidoc")
+				os.system("cd Shallot && ./configure && make")
+				os.system("cd ..")
+				print("[*] Shallot successfully installed!")
+			
+				domain = ""
+				while(domain == "" or len(domain) > 5):
+			
+					domain = str(input("[*] Please enter your desired domain (5 caracters max.):\n"))
+			
+				print("[*] Beggining generation. It can take several hours.")
+				os.system('./Shallot -m ^' + domain + ' > key')
+				os.system("cat key | grep -v 'Found' | grep -v '\----------------------------------------------------------------' > ~/private_key")
+				os.system("cat key | grep .onion  | awk -vn=22 '{print substr($0,length($0)-n+1)}' > ~/hostname")
+				print("[*] Generation finished!")
 
-	if(not os.path.exists("/usr/sbin/nginx")):
-	
-		print("[*] Installing Nginx")
-		os.system("apt-get install nginx")
+			except:
+			
+				print("[*] OnionPi encountered an error during the name generation. Please check the logs and retry.")
+
+		else:
+
+			print("[*] Ok. You saved some time.")
+
+		if(os.path.exists("/usr/sbin/apache2")):
+
+			print("[!] OnionPi need to stop Apache2 to let nginx work properly")
+			print("[!] Stopping Apache2")
+			os.system("service apache2 stop")
+
+		if(not os.path.exists("/usr/sbin/nginx")):
 		
-		if(os.path.exists("/etc/nginx/sites-available/default")):
+			print("[*] Installing Nginx")
+			os.system("apt-get install nginx")
 			
-			os.system("cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak")
-			print("[*] Nginx default config file saved under '/etc/nginx/sites-available/default.bak'")
-			
-	print("[*] Stopping Nginx")
-	os.system("service nginx stop")
-	os.system("mkdir /var/lib/tor/hidden_service/")
-	os.system("mkdir /var/www/hidden_service/")
-	if(custom == "y" or custom == "Y"):
-		os.system("mv ~/hostname /var/lib/tor/hidden_service/")
-		os.system("mv ~/private_key /var/lib/tor/hidden_service/")
-	os.system("chown debian-tor:debian-tor -R /var/lib/tor/hidden_service/")
-	os.system("chown debian-tor:debian-tor -R /var/www/hidden_service/")
-	os.system("echo 'HiddenServiceDir /var/lib/tor/hidden_service/' >> /etc/tor/torrc")
-	os.system("echo 'HiddenServicePort 80 127.0.0.1:44480' >> /etc/tor/torrc")
-	print("[*] Starting Tor")
-	os.system("service tor start")
-	if(custom != "y" or custom != "Y"):
-		print("[*] Generating Hostname and Keys")
-		time.sleep(4)
-	time.sleep(2)
-	os.system("echo '<h1>Your Hidden Service is working!</h1><p>- OnionPi</p>' > /var/www/hidden_service/index.html")
-	addr = str(os.popen('cat /var/lib/tor/hidden_service/hostname').read()).rstrip()
-	os.system("echo 'server {' > /etc/nginx/sites-available/default")
-	os.system("echo '	listen	127.0.0.1:44480;' >> /etc/nginx/sites-available/default")
-	os.system("echo '	server_name	" + addr + ";' >> /etc/nginx/sites-available/default")
-	os.system("echo '	root	/var/www/hidden_service/;' >> /etc/nginx/sites-available/default ")
-	os.system("echo '	allow	127.0.0.1;' >> /etc/nginx/sites-available/default")
-	os.system("echo '	deny	all;' >> /etc/nginx/sites-available/default")
-	os.system("echo '	server_tokens	off;' >> /etc/nginx/sites-available/default")			
-	os.system("echo '}' >> /etc/nginx/sites-available/default")
-	print("[*] Starting Nginx")
-	os.system("service nginx start")
-	
-	
-	print("[!] Done! Your Tor Hidden Service is up and running!")
-	print("[!] You Hidden Service is located in : /var/www/hidden_service/")
-	print("[!] You can access it by this URL: " + addr)
+			if(os.path.exists("/etc/nginx/sites-available/default")):
+				
+				os.system("cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak")
+				print("[*] Nginx default config file saved under '/etc/nginx/sites-available/default.bak'")
+				
+		print("[*] Stopping Nginx")
+		os.system("service nginx stop")
+		os.system("mkdir /var/lib/tor/hidden_service/")
+		os.system("mkdir /var/www/hidden_service/")
+		if(custom == "y" or custom == "Y"):
+			os.system("mv ~/hostname /var/lib/tor/hidden_service/")
+			os.system("mv ~/private_key /var/lib/tor/hidden_service/")
+		os.system("chown debian-tor:debian-tor -R /var/lib/tor/hidden_service/")
+		os.system("chown debian-tor:debian-tor -R /var/www/hidden_service/")
+		os.system("echo 'HiddenServiceDir /var/lib/tor/hidden_service/' >> /etc/tor/torrc")
+		os.system("echo 'HiddenServicePort 80 127.0.0.1:44480' >> /etc/tor/torrc")
+		print("[*] Starting Tor")
+		os.system("service tor start")
+		if(custom != "y" or custom != "Y"):
+			print("[*] Generating Hostname and Keys")
+			time.sleep(4)
+		else:
+			time.sleep(2)
+		os.system("echo '<h1>Your Hidden Service is working!</h1><p>- OnionPi</p>' > /var/www/hidden_service/index.html")
+		addr = str(os.popen('cat /var/lib/tor/hidden_service/hostname').read()).rstrip()
+		os.system("echo 'server {' > /etc/nginx/sites-available/default")
+		os.system("echo '	listen	127.0.0.1:44480;' >> /etc/nginx/sites-available/default")
+		os.system("echo '	server_name	" + addr + ";' >> /etc/nginx/sites-available/default")
+		os.system("echo '	root	/var/www/hidden_service/;' >> /etc/nginx/sites-available/default ")
+		os.system("echo '	allow	127.0.0.1;' >> /etc/nginx/sites-available/default")
+		os.system("echo '	deny	all;' >> /etc/nginx/sites-available/default")
+		os.system("echo '	server_tokens	off;' >> /etc/nginx/sites-available/default")			
+		os.system("echo '}' >> /etc/nginx/sites-available/default")
+		print("[*] Starting Nginx")
+		os.system("service nginx start")
+		
+		
+		print("[!] Done! Your Tor Hidden Service is up and running!")
+		print("[!] You Hidden Service is located in : /var/www/hidden_service/")
+		print("[!] You can access it by this URL: " + addr)
 
 	sys.exit("[!] OnionPi finished his job. Quitting.")
