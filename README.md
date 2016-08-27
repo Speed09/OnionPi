@@ -1,3 +1,4 @@
+![alt tag](http://img4.hostingpics.net/pics/296111OnionPi.png)
 #OnionPi
 OnionPi is a simple Tor installation utility for the Raspberry Pi.</br>
 Setting up Tor's features can be hard and dangerous if you don't really know how to do it properly.</br>
