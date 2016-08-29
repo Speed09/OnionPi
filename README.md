@@ -1,10 +1,6 @@
-![alt tag](http://img4.hostingpics.net/pics/739115rszonionpi.png)
-#OnionPi
+![alt tag](http://img4.hostingpics.net/pics/739115rszonionpi.png) #OnionPi
 OnionPi is a simple Tor installation utility for the Raspberry Pi.</br>
-Setting up Tor's features can be hard and dangerous if you don't really know how to do it properly.</br>
-But OnionPi is here for you!</br>
-At the moment OnionPi is optimized for the Raspberry Pi.</br>
-Other Distros support is currently being tested.</br>
+At the moment OnionPi is optimized for the Raspberry Pi but will work on any Debian based disrto.</br>
 
 #Features
 - Tor Relay installation and configuration</br>
