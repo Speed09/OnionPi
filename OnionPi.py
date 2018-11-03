@@ -46,7 +46,7 @@ print("          ``:ydo+s:/hddo/hh/.h:.- ````````  ``         ")
 print("             ``:+/+o///so//`/-`  ``````   `            ")
 print("                `  ``.-. ``        `                   ")
 print("                          `  `     				      ")
-print("		OnionPi v1.0\n 	by Speed09 - www.speed09.com\n")
+print("		OnionPi v1.1\n 	by Tom ESCOLANO - www.tomescolano.com\n")
 
 if(os.geteuid() != 0):
     sys.exit("You need to have root privileges to run this script.\nPlease try again, this time using 'sudo'. Exiting.")
@@ -128,7 +128,7 @@ def relay():
 		
 		band = 0
 		while(band <= 0 or band > 10000):
-			band = int(input("[?] How much do you want alocate bandwith to your relay? (in Kb/s): "))
+			band = int(input("[?] How much do you want allocate bandwith to your relay? (in Kb/s): "))
 		
 		print("[*] Setting up default values for the relay")
 		os.system("RelayBandwidthRate " + band + " KB' >> /etc/tor/torrc")
@@ -142,7 +142,7 @@ def relay():
 		ex = ""
 		while(ex == ""):
 		
-			ex = input("[?] Do you want to run your relay as an exit relay? (Dangerous for personnal devices) (Y/N): ")
+			ex = input("[?] Do you want to run your relay as an exit relay? (Dangerous for personnal devices and domestic networks) (Y/N): ")
 		
 		if(ex == "Y" or ex == "y"):
 		
@@ -287,7 +287,7 @@ def relay():
 			os.system("ExitPolicy reject *:*' >> /etc/tor/torrc")
 			
 		arm = ""
-		while(arm == ""):
+		while(arm != "Y" && arm != "y" && arm != "N" && arm != "n"):
 			
 			arm = input("[?] Do you want to install Tor-Arm to monitor you relay? (Y/N)\n")
 		
@@ -326,7 +326,7 @@ def bridge():
 	else:
 
 		pub = ""
-		while(pub == ""):
+		while(pub != "Y" && pub != "y" && pub != "N" && pub != "n"):
 
 			pub = input("[?] Do you want torproject.org to know your bridge? (Y/N): ")
 
@@ -368,7 +368,7 @@ def hidden():
 	
 	else:
 	
-		while(custom == ""):
+		while(custom != "Y" && custom != "y" && custom != "N" && custom != "n"):
 	
 			custom = str(input("[?] Do you want to generate a custom .onion address? (Can take some hours) (Y/N):\n"))
 	
@@ -395,7 +395,7 @@ def hidden():
 				domain = ""
 				while(domain == "" or len(domain) > 5):
 			
-					domain = str(input("[*] Please enter your desired domain (5 caracters max.):\n"))
+					domain = str(input("[*] Please enter your desired domain (5 caracters max., calculation time will be too long if it exceed 5 car.):\n"))
 			
 				print("[*] Beggining generation. It can take several hours.")
 				os.system('./Shallot -m ^' + domain + ' > key')
